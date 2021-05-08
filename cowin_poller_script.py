@@ -6,11 +6,6 @@ import subprocess
 import concurrent.futures
 import time
 
-# dl = [651, 650, 141, 145, 140, 146, 147, 143, 148, 149, 144, 150, 142, ]
-# thresh = 0
-# min_age_limit = 18
-
-
 headers = {
 	"authority" : """cdn-api.co-vin.in""",
 	"accept" : """application/json, text/plain, */*""",
@@ -27,11 +22,17 @@ headers = {
 
 
 def filter_sessions_on_age_thresh(centre_list):
+	"""
+	Remove sessions if the minimum slots and age criteria not met
+	"""
 	for centre in centre_list:
 		centre['sessions'] = filter(lambda session: session['min_age_limit'] == min_age_limit and session['available_capacity'] >= thresh, centre['sessions'])
 
 
 def notify(notification_list):
+	"""
+	Send out notifications
+	"""
 	if platform.system() == 'Darwin':
 		command_func = lambda n: (["osascript", "-", "e"], 'display notification "{}" with title "Vaccination Centre found" sound name "default"'.format(n))
 	else:
@@ -44,6 +45,9 @@ def notify(notification_list):
 
 
 def get_notifications(date, dist_list):
+	"""
+	Return list of notification to be sent 
+	"""
 	notification_list = []
 	for dist in dist_list:
 		for centre in dist['centers']:
@@ -55,7 +59,8 @@ def get_notifications(date, dist_list):
 
 
 def poll(date):
-	# poll and notify based on the parameters
+	# Poll all districts for the given date
+	
 	print("Checking for date : {}".format(date.strftime('%d-%m-%Y')))
 	def dist_poller(dist_id):
 		url = "https://cdn-api.co-vin.in/api/v2/appointment/sessions/public/calendarByDistrict?district_id={}&date={}".format(dist_id, date.strftime('%d-%m-%Y'))
@@ -77,6 +82,9 @@ def poll(date):
 
 
 def dates_poller():
+	"""
+	Poll for this week + subsequent three weeks 
+	"""
 	today = datetime.date.today()
 	polling_date_list = [
 		today,
@@ -88,9 +96,6 @@ def dates_poller():
 	with concurrent.futures.ThreadPoolExecutor(max_workers=None) as executor:
 		executor.map(poll, polling_date_list)
 
-	# for d in polling_date_list:
-	# 	print("Checking for date : {}".format(d.strftime('%d-%m-%Y')))
-	# 	poll(d)
 
 if __name__ == "__main__":
 	global thresh
