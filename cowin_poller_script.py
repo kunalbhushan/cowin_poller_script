@@ -73,6 +73,10 @@ def poll(date):
 		url = "https://cdn-api.co-vin.in/api/v2/appointment/sessions/public/calendarByDistrict?district_id={}&date={}".format(dist_id, date.strftime('%d-%m-%Y'))
 		cowin_resp = requests.get(url, headers=headers)
 		print("Cowin Response Status: {}".format(cowin_resp.status_code))
+
+		if cowin_resp.status_code == 403:
+			notify(["Requests blocked please increase polling interval and try after some time!"])
+
 		parsed_cowin_resp = json.loads(cowin_resp.content)
 		centers = parsed_cowin_resp['centers']
 		filter_sessions_on_age_thresh(centers)
