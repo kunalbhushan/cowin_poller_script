@@ -1,6 +1,7 @@
 # COWIN Poller Script
 Python script to poll COWIN and notify in case slots are available based on inputs
-Currently only supports MacOS (Darwin) for notifications
+
+Currently only supports MacOS (Darwin) for platform notifications
 
 List of districts with district IDs : https://drive.google.com/file/d/1007DlyZesRhXQY6NEr3wAJEvt0XINdhh/view?usp=sharing
 
