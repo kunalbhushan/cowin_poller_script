@@ -5,6 +5,7 @@ import platform
 import subprocess
 import concurrent.futures
 import time
+from random import random
 
 headers = {
 	"authority" : """cdn-api.co-vin.in""",
@@ -19,6 +20,10 @@ headers = {
 	"referer" : """https://www.cowin.gov.in/""",
 	"accept-language" : """en-US,en;q=0.9"""
 }
+
+
+def get_jitter():
+	return random()*polling_interval
 
 
 def filter_sessions_on_age_thresh(centre_list):
@@ -63,8 +68,11 @@ def poll(date):
 	
 	print("Checking for date : {}".format(date.strftime('%d-%m-%Y')))
 	def dist_poller(dist_id):
+		print("Polling for id : {} and date {}".format(dist_id, date.strftime('%d-%m-%Y')))
+		time.sleep(get_jitter())
 		url = "https://cdn-api.co-vin.in/api/v2/appointment/sessions/public/calendarByDistrict?district_id={}&date={}".format(dist_id, date.strftime('%d-%m-%Y'))
 		cowin_resp = requests.get(url, headers=headers)
+		print("Cowin Response Status: {}".format(cowin_resp.status_code))
 		parsed_cowin_resp = json.loads(cowin_resp.content)
 		centers = parsed_cowin_resp['centers']
 		filter_sessions_on_age_thresh(centers)
@@ -94,7 +102,9 @@ def dates_poller():
 
 
 	with concurrent.futures.ThreadPoolExecutor(max_workers=None) as executor:
-		executor.map(poll, polling_date_list)
+		poller_futures = [executor.submit(poll, d) for d in polling_date_list]
+		for poller_future in concurrent.futures.as_completed(poller_futures):
+			poller_future.result()
 
 
 if __name__ == "__main__":
@@ -110,7 +120,7 @@ if __name__ == "__main__":
 	dl = [int(did.strip()) for did in input("Enter list of districts ids (comma separated) : ").split(',')]
 	thresh = int(input("Enter minimum number of slots (per centre in district) available to notify : "))
 	min_age_limit = int(input("Enter minimum age (18/45) : "))
-	polling_interval = int(input("Enter Polling interval in seconds : "))
+	polling_interval = int(input("Enter Polling interval in seconds : "))/2
 
 	while True:
 		dates_poller()
