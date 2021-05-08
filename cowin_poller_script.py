@@ -72,8 +72,6 @@ def poll(date):
 		for poller_future in concurrent.futures.as_completed(poller_futures):
 			dist_resp_list.append(poller_future.result())
 
-	print(dist_resp_list)
-
 	notifications = get_notifications(date, dist_resp_list)
 	notify(notifications)
 
@@ -105,11 +103,12 @@ if __name__ == "__main__":
 	# min_age_limit = 18
 
 	dl = [int(did.strip()) for did in input("Enter list of districts ids (comma separated) : ").split(',')]
-	thresh = int(input("Enter minimum number of slots available to notify : "))
-	min_age_limit = int(input("Enter mminimum age (18/45) : "))
+	thresh = int(input("Enter minimum number of slots (per centre in district) available to notify : "))
+	min_age_limit = int(input("Enter minimum age (18/45) : "))
 	polling_interval = int(input("Enter Polling interval in seconds : "))
 
 	while True:
 		dates_poller()
 		time.sleep(polling_interval)
+
 
