@@ -31,7 +31,10 @@ def filter_sessions_on_age_thresh(centre_list):
 	Remove sessions if the minimum slots and age criteria not met
 	"""
 	for centre in centre_list:
-		centre['sessions'] = filter(lambda session: session['min_age_limit'] == min_age_limit and session['available_capacity'] >= thresh and centre['fee_type'].lower() == fee_type.lower(), centre['sessions'])
+		centre['sessions'] = filter(lambda session: session['min_age_limit'] == min_age_limit and 
+													session['available_capacity'] >= thresh and 
+													centre['fee_type'].lower() == fee_type.lower(),
+									 centre['sessions'])
 
 
 def notify(notification_list):
