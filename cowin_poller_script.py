@@ -97,6 +97,13 @@ def poll(date):
 	notify(notifications)
 
 
+def get_list_index_or_none(l, idx):
+	try:
+		return l[idx]
+	except IndexError:
+		return None
+
+
 def dates_poller():
 	"""
 	Poll for this week + subsequent three weeks 
@@ -128,12 +135,12 @@ if __name__ == "__main__":
 	# thresh = 0
 	# min_age_limit = 18
 
-	dl =  [int(did.strip()) for did in (sys.argv[1] or input("Enter list of districts ids (comma separated) : ")).split(',')]
-	thresh = int(sys.argv[2] or input("Enter minimum number of slots (per centre in district) available to notify : "))
-	min_age_limit = int(sys.argv[3] or input("Enter minimum age (18/45) : "))
-	fee_type = sys.argv[4] or input("Enter Fee Type (Free/Paid) : ")
-	future_weeks = int(sys.argv[5] or input("Enter number of weeks to check after the current one : "))
-	polling_interval = int(sys.argv[6] or input("Enter Polling interval in seconds : "))
+	dl =  [int(did.strip()) for did in (get_list_index_or_none(sys.argv, 1) or input("Enter list of districts ids (comma separated) : ")).split(',')]
+	thresh = int(get_list_index_or_none(sys.argv, 2) or input("Enter minimum number of slots (per centre in district) available to notify : "))
+	min_age_limit = int(get_list_index_or_none(sys.argv, 3) or input("Enter minimum age (18/45) : "))
+	fee_type = get_list_index_or_none(sys.argv, 4) or input("Enter Fee Type (Free/Paid) : ")
+	future_weeks = int(get_list_index_or_none(sys.argv, 5) or input("Enter number of weeks to check after the current one : "))
+	polling_interval = int(get_list_index_or_none(sys.argv, 6) or input("Enter Polling interval in seconds : "))
 
 	while True:
 		dates_poller()
