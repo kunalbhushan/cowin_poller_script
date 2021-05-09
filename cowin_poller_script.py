@@ -31,7 +31,7 @@ def filter_sessions_on_age_thresh(centre_list):
 	Remove sessions if the minimum slots and age criteria not met
 	"""
 	for centre in centre_list:
-		centre['sessions'] = filter(lambda session: session['min_age_limit'] == min_age_limit and session['available_capacity'] >= thresh, centre['sessions'])
+		centre['sessions'] = filter(lambda session: session['min_age_limit'] == min_age_limit and session['available_capacity'] >= thresh and centre['fee_type'].lower() == fee_type.lower(), centre['sessions'])
 
 
 def notify(notification_list):
@@ -101,8 +101,9 @@ def dates_poller():
 	polling_date_list = [
 		today,
 	]
-	list(map(lambda w: polling_date_list.append(today + datetime.timedelta(days=-today.weekday(), weeks=w)), 
-			 [1,2,3]))
+	if future_weeks:
+		list(map(lambda w: polling_date_list.append(today + datetime.timedelta(days=-today.weekday(), weeks=w)), 
+				 range(1, future_weeks+1)))
 
 
 	with concurrent.futures.ThreadPoolExecutor(max_workers=None) as executor:
@@ -116,6 +117,8 @@ if __name__ == "__main__":
 	global dl
 	global min_age_limit
 	global polling_interval
+	global fee_type
+	global future_weeks
 
 	# dl = [651, 650, 141, 145, 140, 146, 147, 143, 148, 149, 144, 150, 142, ]
 	# thresh = 0
@@ -124,6 +127,8 @@ if __name__ == "__main__":
 	dl = [int(did.strip()) for did in input("Enter list of districts ids (comma separated) : ").split(',')]
 	thresh = int(input("Enter minimum number of slots (per centre in district) available to notify : "))
 	min_age_limit = int(input("Enter minimum age (18/45) : "))
+	fee_type = input("Enter Fee Type (Free/Paid) : ")
+	future_weeks = int(input("Enter number of weeks to check after the current one : "))
 	polling_interval = int(input("Enter Polling interval in seconds : "))
 
 	while True:
