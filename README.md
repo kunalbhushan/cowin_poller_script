@@ -10,6 +10,12 @@ Python 3
 
 Usage:
 ~~~
-python3 cowin_poller_script.py
+	python3 cowin_poller_script.py
 ~~~
 
+	OR
+
+
+~~~
+	python3 cowin_poller_script.py "<comma separated List of districts>" <Threshold> <min age> <free/paid> <subsequent weeks to check for> <polling interval>
+~~~

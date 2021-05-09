@@ -6,6 +6,7 @@ import subprocess
 import concurrent.futures
 import time
 from random import random
+import sys
 
 headers = {
 	"authority" : """cdn-api.co-vin.in""",
@@ -31,10 +32,10 @@ def filter_sessions_on_age_thresh(centre_list):
 	Remove sessions if the minimum slots and age criteria not met
 	"""
 	for centre in centre_list:
-		centre['sessions'] = filter(lambda session: session['min_age_limit'] == min_age_limit and 
+		centre['sessions'] = list(filter(lambda session: session['min_age_limit'] == min_age_limit and 
 													session['available_capacity'] >= thresh and 
 													centre['fee_type'].lower() == fee_type.lower(),
-									 centre['sessions'])
+									 	centre['sessions']))
 
 
 def notify(notification_list):
@@ -127,12 +128,12 @@ if __name__ == "__main__":
 	# thresh = 0
 	# min_age_limit = 18
 
-	dl = [int(did.strip()) for did in input("Enter list of districts ids (comma separated) : ").split(',')]
-	thresh = int(input("Enter minimum number of slots (per centre in district) available to notify : "))
-	min_age_limit = int(input("Enter minimum age (18/45) : "))
-	fee_type = input("Enter Fee Type (Free/Paid) : ")
-	future_weeks = int(input("Enter number of weeks to check after the current one : "))
-	polling_interval = int(input("Enter Polling interval in seconds : "))
+	dl =  [int(did.strip()) for did in (sys.argv[1] or input("Enter list of districts ids (comma separated) : ")).split(',')]
+	thresh = int(sys.argv[2] or input("Enter minimum number of slots (per centre in district) available to notify : "))
+	min_age_limit = int(sys.argv[3] or input("Enter minimum age (18/45) : "))
+	fee_type = sys.argv[4] or input("Enter Fee Type (Free/Paid) : ")
+	future_weeks = int(sys.argv[5] or input("Enter number of weeks to check after the current one : "))
+	polling_interval = int(sys.argv[6] or input("Enter Polling interval in seconds : "))
 
 	while True:
 		dates_poller()
