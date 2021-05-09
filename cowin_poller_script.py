@@ -84,6 +84,8 @@ def poll(date):
 		parsed_cowin_resp = json.loads(cowin_resp.content)
 		centers = parsed_cowin_resp['centers']
 		filter_sessions_on_age_thresh(centers)
+		notifications = get_notifications(date, [parsed_cowin_resp, ])
+		notify(notifications)
 		return parsed_cowin_resp
 
 	dist_resp_list = []
@@ -92,9 +94,6 @@ def poll(date):
 		poller_futures = [executor.submit(dist_poller, dist_id) for dist_id in dl]
 		for poller_future in concurrent.futures.as_completed(poller_futures):
 			dist_resp_list.append(poller_future.result())
-
-	notifications = get_notifications(date, dist_resp_list)
-	notify(notifications)
 
 
 def get_list_index_or_none(l, idx):
