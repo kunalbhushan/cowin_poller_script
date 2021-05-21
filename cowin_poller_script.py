@@ -33,7 +33,7 @@ def filter_sessions_on_age_thresh(centre_list):
 	"""
 	for centre in centre_list:
 		centre['sessions'] = list(filter(lambda session: session['min_age_limit'] == min_age_limit and 
-													session['available_capacity'] >= thresh and 
+													session['available_capacity_dose1'] >= thresh and 
 													centre['fee_type'].lower() == fee_type.lower(),
 									 	centre['sessions']))
 
